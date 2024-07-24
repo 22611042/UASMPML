@@ -1,0 +1,5 @@
+echo "streamlit" >> requirements.txt
+echo "joblib" >> requirements.txt
+echo "scikit-learn" >> requirements.txt
+echo "pandas" >> requirements.txt
+echo "numpy" >> requirements.txt
