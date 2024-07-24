@@ -4,6 +4,8 @@ import pandas as pd
 
 # Load the model and other required objects
 model = joblib.load('random_forest_model.pkl')
+label_encoders = joblib.load('label_encoders.pkl')
+scaler = joblib.load('scaler.pkl')
 
 
 # Define the main function for the app
