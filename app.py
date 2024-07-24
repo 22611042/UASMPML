@@ -1,12 +1,9 @@
 import streamlit as st
 import joblib
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # Load the model and other required objects
 model = joblib.load('random_forest_model.pkl')
-
-# Load the encoders and scaler
 label_encoders = joblib.load('label_encoders.pkl')
 scaler = joblib.load('scaler.pkl')
 
