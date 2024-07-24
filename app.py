@@ -7,18 +7,25 @@ import numpy as np
 # Load the model
 model = joblib.load('random_forest_model.pkl')
 
-# Create label encoders for categorical features
+# Define label encoders and scaler (they should be the same as used in preprocessing)
 categorical_columns = ['Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Feedback']
-label_encoders = {}
-for column in categorical_columns:
-    le = LabelEncoder()
-    label_encoders[column] = le
+label_encoders = {column: LabelEncoder() for column in categorical_columns}
+
+# Fit the encoders with the possible values (these values should match your training data)
+label_encoders['Gender'].fit(['Male', 'Female'])
+label_encoders['Marital Status'].fit(['Single', 'Married'])
+label_encoders['Occupation'].fit(['Student', 'Professional', 'Others'])
+label_encoders['Monthly Income'].fit(['No Income', 'Below Rs.10000', 'Rs.10001 to Rs.30000', 'Rs.30001 to Rs.50000', 'Above Rs.50000'])
+label_encoders['Educational Qualifications'].fit(['Graduate', 'Post Graduate', 'Others'])
+label_encoders['Feedback'].fit(['Positive', 'Negative'])
+
+scaler = StandardScaler()
+numerical_columns = ['Age', 'Family size', 'latitude', 'longitude']
 
 # Function to preprocess user input
 def preprocess_input(data):
     for column in categorical_columns:
         data[column] = label_encoders[column].transform([data[column]])[0]
-    numerical_columns = ['Age', 'Family size', 'latitude', 'longitude']
     data[numerical_columns] = scaler.transform([data[numerical_columns]])
     return data
 
