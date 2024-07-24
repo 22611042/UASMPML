@@ -1,16 +1,22 @@
 import streamlit as st
 import joblib
 import pandas as pd
-
-# Load the model and other required objects
-model = joblib.load('random_forest_model.pkl')
-label_encoders = joblib.load('label_encoders.pkl')
-scaler = joblib.load('scaler.pkl')
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.exceptions import NotFittedError
 
 # Define the main function for the app
 def main():
     st.title("Online Food Prediction App")
     
+    # Load the model and other required objects
+    try:
+        model = joblib.load('random_forest_model.pkl')
+        label_encoders = joblib.load('label_encoders.pkl')
+        scaler = joblib.load('scaler.pkl')
+    except FileNotFoundError as e:
+        st.error(f"Error loading model or preprocessing objects: {e}")
+        return
+
     # Input fields
     age = st.number_input("Age", min_value=0, max_value=100, value=25)
     gender = st.selectbox("Gender", options=["Male", "Female"])
@@ -36,12 +42,16 @@ def main():
         'longitude': [longitude],
         'Feedback': [feedback]
     })
-    
-    for column in ['Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Feedback']:
-        inputs[column] = label_encoders[column].transform(inputs[column])
-    
-    numerical_columns = ['Age', 'Family size', 'latitude', 'longitude']
-    inputs[numerical_columns] = scaler.transform(inputs[numerical_columns])
+
+    try:
+        for column in ['Gender', 'Marital Status', 'Occupation', 'Monthly Income', 'Educational Qualifications', 'Feedback']:
+            inputs[column] = label_encoders[column].transform(inputs[column])
+        
+        numerical_columns = ['Age', 'Family size', 'latitude', 'longitude']
+        inputs[numerical_columns] = scaler.transform(inputs[numerical_columns])
+    except NotFittedError as e:
+        st.error(f"Error in preprocessing: {e}")
+        return
     
     # Prediction
     if st.button("Predict"):
